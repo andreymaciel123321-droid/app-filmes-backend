@@ -1,69 +1,78 @@
 // src/authRoutes.js
 const express = require('express');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const db = require('./db');
-
 const router = express.Router();
+const db = require('./db');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
-// Cadastro
+// ROTA DE CADASTRO
 router.post('/cadastro', async (req, res) => {
-  try {
     const { nome, email, senha } = req.body;
 
     if (!nome || !email || !senha) {
-      return res.status(400).json({ erro: 'nome, email e senha são obrigatórios' });
+        return res.status(400).json({ erro: 'Preencha todos os campos' });
     }
 
-    const { rows } = await db.query('SELECT id FROM usuarios WHERE email = $1', [email]);
-    if (rows.length) {
-      return res.status(400).json({ erro: 'Email já cadastrado' });
+    try {
+        const hashed = await bcrypt.hash(senha, 10);
+
+        const query = `
+            INSERT INTO usuarios (nome, email, senha)
+            VALUES ($1, $2, $3)
+            RETURNING id, nome, email
+        `;
+
+        const values = [nome, email, hashed];
+
+        const result = await db.query(query, values);
+
+        res.status(201).json({
+            mensagem: "Usuário cadastrado com sucesso",
+            usuario: result.rows[0]
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ erro: 'Erro interno no servidor' });
     }
-
-    const hash = await bcrypt.hash(senha, 10);
-
-    await db.query(
-      'INSERT INTO usuarios (nome, email, senha) VALUES ($1, $2, $3)',
-      [nome, email, hash]
-    );
-
-    res.json({ mensagem: 'Usuário cadastrado com sucesso' });
-
-  } catch (err) {
-    res.status(500).json({ erro: err.message });
-  }
 });
 
-// Login
+
+// ROTA DE LOGIN
 router.post('/login', async (req, res) => {
-  try {
     const { email, senha } = req.body;
 
-    if (!email || !senha) {
-      return res.status(400).json({ erro: 'email e senha obrigatórios' });
+    try {
+        const result = await db.query(
+            "SELECT * FROM usuarios WHERE email = $1",
+            [email]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(400).json({ erro: "Usuário não encontrado" });
+        }
+
+        const usuario = result.rows[0];
+
+        const senhaOk = await bcrypt.compare(senha, usuario.senha);
+
+        if (!senhaOk) {
+            return res.status(401).json({ erro: "Senha incorreta" });
+        }
+
+        const token = jwt.sign(
+            { id: usuario.id, email: usuario.email },
+            process.env.JWT_SECRET || "segredo123",
+            { expiresIn: "2h" }
+        );
+
+        res.json({ mensagem: "Login realizado", token });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ erro: 'Erro interno no servidor' });
     }
-
-    const { rows } = await db.query('SELECT * FROM usuarios WHERE email = $1', [email]);
-    if (rows.length === 0) {
-      return res.status(400).json({ erro: 'Usuário não encontrado' });
-    }
-
-    const user = rows[0];
-    const ok = await bcrypt.compare(senha, user.senha);
-
-    if (!ok) return res.status(400).json({ erro: 'Senha incorreta' });
-
-    const token = jwt.sign(
-      { id: user.id, email: user.email, nome: user.nome },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-
-    res.json({ mensagem: 'Login realizado', token });
-
-  } catch (err) {
-    res.status(500).json({ erro: err.message });
-  }
 });
+
 
 module.exports = router;
