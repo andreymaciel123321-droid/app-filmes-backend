@@ -1,5 +1,5 @@
 // src/auth.js
-const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 function auth(req, res, next) {
   const header = req.headers.authorization || '';
