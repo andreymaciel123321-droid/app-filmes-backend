@@ -1,25 +1,29 @@
-const express = require("express");
+// src/server.js
+const express = require('express');
+const db = require('./db');
+const authRoutes = require('./authRoutes');
+const auth = require('./auth');
+
 const app = express();
-const port = process.env.PORT || 3000;
+app.use(express.json());
 
-// Lista de filmes (exemplo)
-const filmes = [
-  { id: 1, titulo: "Vingadores Ultimato", ano: 2019 },
-  { id: 2, titulo: "Homem-Aranha Sem Volta Para Casa", ano: 2021 },
-  { id: 3, titulo: "Interestelar", ano: 2014 }
-];
-
-// Rota principal
-app.get("/", (req, res) => {
-  res.send("API de Filmes Funcionando!");
+// Rota de teste — retorna filmes se existir tabela movies
+app.get('/', async (req, res) => {
+  try {
+    const { rows } = await db.query("SELECT id, titulo, ano FROM movies LIMIT 50");
+    return res.json(rows);
+  } catch (err) {
+    return res.status(200).json({ msg: 'server up', error: err.message });
+  }
 });
 
-// Rota de filmes
-app.get("/filmes", (req, res) => {
-  res.json(filmes);
+// Rotas de cadastro e login
+app.use('/', authRoutes);
+
+// Rota protegida
+app.get('/perfil', auth, (req, res) => {
+  res.json({ usuario: req.usuario });
 });
 
-// Iniciar servidor
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
