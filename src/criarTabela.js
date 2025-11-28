@@ -1,9 +1,9 @@
 // src/criarTabela.js
 const db = require('./db');
 
-async function criarTabelaUsers() {
+async function criarTabelaUsuarios() {
   const query = `
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS usuarios (
       id SERIAL PRIMARY KEY,
       nome VARCHAR(100),
       email VARCHAR(150) UNIQUE NOT NULL,
@@ -13,13 +13,10 @@ async function criarTabelaUsers() {
 
   try {
     await db.query(query);
-    console.log("Tabela USERS criada com sucesso!");
+    console.log("Tabela USUARIOS criada com sucesso!");
   } catch (err) {
     console.error("Erro ao criar tabela:", err);
-  } finally {
-    process.exit();
   }
 }
 
-criarTabelaUsers();
-  
+module.exports = criarTabelaUsuarios;
