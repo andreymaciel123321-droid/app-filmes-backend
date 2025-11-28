@@ -1,16 +1,35 @@
-import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import LoginScreen from "../screens/LoginScreen";
-import RegisterScreen from "../screens/RegisterScreen";
+import TabRoutes from './TabRoutes';
+import DetailsScreen from '../screens/DetailsScreen';
+import PlayerScreen from '../screens/PlayerScreen';
 
 const Stack = createNativeStackNavigator();
 
 export default function StackRoutes() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Register" component={RegisterScreen} />
+    <Stack.Navigator>
+      {/* Rotas principais */}
+      <Stack.Screen
+        name="TabRoutes"
+        component={TabRoutes}
+        options={{ headerShown: false }}
+      />
+
+      {/* Tela de detalhes */}
+      <Stack.Screen
+        name="Details"
+        component={DetailsScreen}
+        options={{ headerShown: false }}
+      />
+
+      {/* Player */}
+      <Stack.Screen
+        name="Player"
+        component={PlayerScreen}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 }
