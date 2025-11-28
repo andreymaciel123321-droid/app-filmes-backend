@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../services/api';
 
 export default function LoginScreen({ navigation }) {
@@ -15,8 +16,13 @@ export default function LoginScreen({ navigation }) {
 
       const token = response.data.token;
 
+      // salva o token no celular
+      await AsyncStorage.setItem('token', token);
+
       alert('Login realizado com sucesso!');
-      // futuramente: salvar token e navegar para home
+
+      // navega para Home (TabRoutes)
+      navigation.replace('Tabs');
 
     } catch (error) {
       console.log(error.response?.data || error);
@@ -93,3 +99,4 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   }
 });
+      
