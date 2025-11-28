@@ -1,31 +1,49 @@
-import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
 
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegisterScreen';
+import TabRoutes from "./TabRoutes";
+import DetailsScreen from "../screens/DetailsScreen";
+import PlayerScreen from "../screens/PlayerScreen";
+import ProfileScreen from "../screens/ProfileScreen";
+import PaymentScreen from "../screens/PaymentScreen";
 
-import TabRoutes from './TabRoutes';
-import DetailsScreen from '../screens/DetailsScreen';
-import PlayerScreen from '../screens/PlayerScreen';
-
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 
 export default function StackRoutes() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-
-      {/* Telas de Autenticação */}
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Register" component={RegisterScreen} />
+    <Stack.Navigator>
 
       {/* Telas principais */}
-      <Stack.Screen name="Tabs" component={TabRoutes} />
+      <Stack.Screen
+        name="TabRoutes"
+        component={TabRoutes}
+        options={{ headerShown: false }}
+      />
 
-      {/* Detalhes de filme */}
-      <Stack.Screen name="Details" component={DetailsScreen} />
+      <Stack.Screen
+        name="Details"
+        component={DetailsScreen}
+        options={{ headerShown: false }}
+      />
 
-      {/* Player */}
-      <Stack.Screen name="Player" component={PlayerScreen} />
+      <Stack.Screen
+        name="Player"
+        component={PlayerScreen}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ headerShown: false }}
+      />
+
+      {/* Tela de Pagamento */}
+      <Stack.Screen
+        name="Payment"
+        component={PaymentScreen}
+        options={{ headerShown: false }}
+      />
 
     </Stack.Navigator>
   );
