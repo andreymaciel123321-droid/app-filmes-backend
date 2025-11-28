@@ -1,7 +1,3 @@
-import axios from 'axios';
-
 const api = axios.create({
-  baseURL: 'https://app-filmes-backend.onrender.com'
+  baseURL: 'https://app-filmes-backend.onrender.com'  // Altere para a URL do seu backend
 });
-
-export default api;
