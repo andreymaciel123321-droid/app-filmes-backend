@@ -1,38 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-import API from '../services/API';
+import React, { useEffect, useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import API from "../services/API";
 
 export default function ProfileScreen({ navigation }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Carrega dados do usuário logado
   const loadUser = async () => {
     try {
-      const token = await AsyncStorage.getItem('token');
-      if (!token) {
-        Alert.alert("Erro", "Nenhum token encontrado. Faça login novamente.");
-        navigation.replace("Login");
-        return;
-      }
+      const token = await AsyncStorage.getItem("token");
+      if (!token) return navigation.replace("Login");
 
       const response = await axios.get(`${API}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       setUser(response.data.user);
-    } catch (error) {
-      Alert.alert("Erro", "Não foi possível carregar seu perfil.");
-      console.log(error);
+    } catch (err) {
+      Alert.alert("Erro", "Não foi possível carregar os dados.");
+      console.log(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem('token');
+  const logout = async () => {
+    await AsyncStorage.removeItem("token");
     navigation.replace("Login");
   };
 
@@ -42,104 +37,93 @@ export default function ProfileScreen({ navigation }) {
 
   if (loading) {
     return (
-      <View style={styles.loading}>
+      <View style={styles.loadingArea}>
         <ActivityIndicator size="large" color="#fff" />
       </View>
     );
   }
 
-  if (!user) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.text}>Erro ao carregar perfil.</Text>
-      </View>
-    );
-  }
+  if (!user) return null;
 
   return (
     <View style={styles.container}>
-
       <Text style={styles.title}>Meu Perfil</Text>
-
-      <Text style={styles.label}>Nome:</Text>
-      <Text style={styles.value}>{user.name}</Text>
 
       <Text style={styles.label}>Email:</Text>
       <Text style={styles.value}>{user.email}</Text>
 
       <Text style={styles.label}>Assinatura:</Text>
       <Text style={styles.value}>
-        {user.isPremium ? "ATIVA ✔" : "INATIVA ✖"}
+        {user.isPremium ? "Premium Ativo" : "Gratuito"}
       </Text>
 
       {!user.isPremium && (
-        <TouchableOpacity style={styles.button} onPress={() => {
-          Alert.alert("Pagamento", "Redirecionando para o pagamento...");
-          navigation.navigate("Payment");
-        }}>
-          <Text style={styles.buttonText}>Ativar Premium</Text>
+        <TouchableOpacity
+          style={styles.payButton}
+          onPress={() => navigation.navigate("Payment")}
+        >
+          <Text style={styles.payButtonText}>Assinar Premium</Text>
         </TouchableOpacity>
       )}
 
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+      <TouchableOpacity style={styles.logoutButton} onPress={logout}>
         <Text style={styles.logoutText}>Sair</Text>
       </TouchableOpacity>
-
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  loadingArea: {
     flex: 1,
-    backgroundColor: '#111',
-    padding: 20,
-  },
-  loading: {
-    flex: 1,
-    backgroundColor: "#111",
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#000",
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "#111",
+    padding: 20,
   },
   title: {
-    color: '#fff',
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+    color: "#fff",
     marginBottom: 30,
-    textAlign: "center"
+    textAlign: "center",
   },
   label: {
-    color: '#aaa',
-    fontSize: 16,
-    marginTop: 15,
+    color: "#aaa",
+    fontSize: 18,
+    marginTop: 10,
   },
   value: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: "bold",
+    color: "#fff",
+    fontSize: 20,
+    marginBottom: 15,
   },
-  button: {
-    backgroundColor: "#0f0",
+  payButton: {
+    backgroundColor: "#00ff5f",
     padding: 15,
-    marginTop: 30,
     borderRadius: 10,
+    marginTop: 25,
   },
-  buttonText: {
-    textAlign: "center",
+  payButtonText: {
+    color: "#000",
     fontSize: 18,
     fontWeight: "bold",
+    textAlign: "center",
   },
   logoutButton: {
-    backgroundColor: "#900",
+    backgroundColor: "#333",
     padding: 15,
-    marginTop: 40,
     borderRadius: 10,
+    marginTop: 25,
   },
   logoutText: {
-    textAlign: "center",
     color: "#fff",
     fontSize: 18,
-    fontWeight: "bold",
+    textAlign: "center",
   },
 });
-  
+            
