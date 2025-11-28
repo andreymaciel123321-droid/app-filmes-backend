@@ -1,10 +1,28 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import api from '../services/api';
 
 export default function RegisterScreen({ navigation }) {
-  const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+
+  const handleRegister = async () => {
+    try {
+      const response = await api.post('/cadastro', {
+        nome,
+        email,
+        senha,
+      });
+
+      alert('Cadastro realizado com sucesso!');
+      navigation.navigate('Login');
+
+    } catch (error) {
+      console.log(error.response?.data || error);
+      alert('Erro ao cadastrar. Tente novamente.');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -20,7 +38,7 @@ export default function RegisterScreen({ navigation }) {
 
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="E-mail"
         placeholderTextColor="#aaa"
         value={email}
         onChangeText={setEmail}
@@ -29,18 +47,18 @@ export default function RegisterScreen({ navigation }) {
       <TextInput
         style={styles.input}
         placeholder="Senha"
-        secureTextEntry
         placeholderTextColor="#aaa"
+        secureTextEntry
         value={senha}
         onChangeText={setSenha}
       />
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Cadastrar</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Text style={styles.link}>Já tenho conta</Text>
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.link}>Voltar ao login</Text>
       </TouchableOpacity>
     </View>
   );
@@ -49,45 +67,37 @@ export default function RegisterScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#111",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    padding: 20
   },
   title: {
-    fontSize: 36,
-    fontWeight: "bold",
-    color: "#e50914",
-    marginBottom: 30,
+    color: '#e50914',
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginBottom: 40,
+    textAlign: 'center'
   },
   input: {
-    width: "100%",
-    height: 50,
-    backgroundColor: "#222",
+    backgroundColor: '#222',
+    color: '#fff',
+    padding: 15,
     borderRadius: 8,
-    paddingHorizontal: 15,
-    color: "#fff",
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: "#e50914",
+    marginBottom: 15
   },
   button: {
-    width: "100%",
-    height: 50,
-    backgroundColor: "#e50914",
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 10,
+    backgroundColor: '#e50914',
+    padding: 15,
+    borderRadius: 8
   },
   buttonText: {
+    color: '#fff',
     fontSize: 18,
-    color: "#fff",
-    fontWeight: "bold",
+    textAlign: 'center'
   },
   link: {
-    color: "#e50914",
-    fontSize: 16,
+    color: '#fff',
     marginTop: 20,
-  },
+    textAlign: 'center'
+  }
 });
