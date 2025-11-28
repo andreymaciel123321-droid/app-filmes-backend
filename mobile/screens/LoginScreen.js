@@ -1,42 +1,38 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 
-export default function LoginScreen() {
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+export default function LoginScreen({ navigation }) {
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <Text style={styles.title}>ANDYFLIX</Text>
 
-      <Text style={styles.logo}>ANDYFLIX</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        placeholderTextColor="#aaa"
+        value={email}
+        onChangeText={setEmail}
+      />
 
-      <View style={styles.box}>
-        <TextInput
-          style={styles.input}
-          placeholder="E-mail"
-          placeholderTextColor="#aaa"
-          value={email}
-          onChangeText={setEmail}
-        />
+      <TextInput
+        style={styles.input}
+        placeholder="Senha"
+        secureTextEntry
+        placeholderTextColor="#aaa"
+        value={senha}
+        onChangeText={setSenha}
+      />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Senha"
-          placeholderTextColor="#aaa"
-          secureTextEntry
-          value={senha}
-          onChangeText={setSenha}
-        />
+      <TouchableOpacity style={styles.button}>
+        <Text style={styles.buttonText}>Entrar</Text>
+      </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Entrar</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity>
-          <Text style={styles.registerText}>Criar conta</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+        <Text style={styles.link}>Criar uma conta</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -44,45 +40,45 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#111",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
   },
-  logo: {
-    color: '#E50914',
-    fontSize: 50,
-    fontWeight: 'bold',
+  title: {
+    fontSize: 42,
+    fontWeight: "bold",
+    color: "#e50914",
     marginBottom: 40,
   },
-  box: {
-    width: '100%',
-  },
   input: {
-    backgroundColor: '#111',
-    padding: 15,
+    width: "100%",
+    height: 50,
+    backgroundColor: "#222",
     borderRadius: 8,
+    paddingHorizontal: 15,
+    color: "#fff",
     marginBottom: 15,
-    color: '#fff',
-    fontSize: 16,
+    borderWidth: 1,
+    borderColor: "#e50914",
   },
   button: {
-    backgroundColor: '#E50914',
-    padding: 15,
+    width: "100%",
+    height: 50,
+    backgroundColor: "#e50914",
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 10,
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 17,
-    fontWeight: 'bold',
+    fontSize: 18,
+    color: "#fff",
+    fontWeight: "bold",
   },
-  registerText: {
-    color: '#fff',
-    textAlign: 'center',
+  link: {
+    color: "#e50914",
+    fontSize: 16,
     marginTop: 20,
-    fontSize: 15,
   },
 });
-    
