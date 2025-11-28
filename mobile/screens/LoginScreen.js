@@ -1,9 +1,28 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import api from '../services/api';
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+
+  const handleLogin = async () => {
+    try {
+      const response = await api.post('/login', {
+        email,
+        senha,
+      });
+
+      const token = response.data.token;
+
+      alert('Login realizado com sucesso!');
+      // futuramente: salvar token e navegar para home
+
+    } catch (error) {
+      console.log(error.response?.data || error);
+      alert('Usuário ou senha inválidos.');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -11,7 +30,7 @@ export default function LoginScreen({ navigation }) {
 
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="E-mail"
         placeholderTextColor="#aaa"
         value={email}
         onChangeText={setEmail}
@@ -20,18 +39,18 @@ export default function LoginScreen({ navigation }) {
       <TextInput
         style={styles.input}
         placeholder="Senha"
-        secureTextEntry
         placeholderTextColor="#aaa"
+        secureTextEntry
         value={senha}
         onChangeText={setSenha}
       />
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Entrar</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-        <Text style={styles.link}>Criar uma conta</Text>
+      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+        <Text style={styles.link}>Criar conta</Text>
       </TouchableOpacity>
     </View>
   );
@@ -40,45 +59,37 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#111",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    padding: 20
   },
   title: {
+    color: '#e50914',
     fontSize: 42,
-    fontWeight: "bold",
-    color: "#e50914",
+    fontWeight: 'bold',
     marginBottom: 40,
+    textAlign: 'center'
   },
   input: {
-    width: "100%",
-    height: 50,
-    backgroundColor: "#222",
+    backgroundColor: '#222',
+    color: '#fff',
+    padding: 15,
     borderRadius: 8,
-    paddingHorizontal: 15,
-    color: "#fff",
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: "#e50914",
+    marginBottom: 15
   },
   button: {
-    width: "100%",
-    height: 50,
-    backgroundColor: "#e50914",
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 10,
+    backgroundColor: '#e50914',
+    padding: 15,
+    borderRadius: 8
   },
   buttonText: {
+    color: '#fff',
     fontSize: 18,
-    color: "#fff",
-    fontWeight: "bold",
+    textAlign: 'center'
   },
   link: {
-    color: "#e50914",
-    fontSize: 16,
+    color: '#fff',
     marginTop: 20,
-  },
+    textAlign: 'center'
+  }
 });
