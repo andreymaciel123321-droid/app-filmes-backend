@@ -1,60 +1,41 @@
-import React from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
-import Banner from "../components/Banner";
-import MovieRow from "../components/MovieRow";
+import React, { useEffect, useState } from "react";
+import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from "react-native";
+import api from "../api";
 
-export default function HomeScreen() {
-  // Filmes de exemplo temporários
-  const trendingData = [
-    {
-      id: 1,
-      title: "Filme 1",
-      poster: "https://i.imgur.com/1NqdYzP.jpeg",
-      description: "Descrição do filme 1",
-      video: "https://www.w3schools.com/html/mov_bbb.mp4",
-    },
-    {
-      id: 2,
-      title: "Filme 2",
-      poster: "https://i.imgur.com/4AiXzf8.jpeg",
-      description: "Descrição do filme 2",
-      video: "https://www.w3schools.com/html/mov_bbb.mp4",
-    },
-  ];
+export default function HomeScreen({ navigation }) {
+  const [movies, setMovies] = useState([]);
 
-  const actionData = [
-    {
-      id: 3,
-      title: "Ação 1",
-      poster: "https://i.imgur.com/1NqdYzP.jpeg",
-      description: "Ação 1 desc",
-      video: "https://www.w3schools.com/html/mov_bbb.mp4",
-    },
-    {
-      id: 4,
-      title: "Ação 2",
-      poster: "https://i.imgur.com/4AiXzf8.jpeg",
-      description: "Ação 2 desc",
-      video: "https://www.w3schools.com/html/mov_bbb.mp4",
-    },
-  ];
+  useEffect(() => {
+    api.get("/movies")
+      .then(res => setMovies(res.data))
+      .catch(err => console.log("Erro ao carregar filmes:", err));
+  }, []);
+
+  const renderMovie = ({ item }) => (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigation.navigate("Details", { movie: item })}
+    >
+      <Image source={{ uri: item.cover }} style={styles.cover} />
+      <Text style={styles.title}>{item.title}</Text>
+    </TouchableOpacity>
+  );
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Banner */}
-      <Banner item={trendingData[0]} />
-
-      {/* Linhas de filmes */}
-      <MovieRow title="Populares" data={trendingData} />
-      <MovieRow title="Ação" data={actionData} />
-    </ScrollView>
+    <View style={styles.container}>
+      <FlatList
+        data={movies}
+        renderItem={renderMovie}
+        keyExtractor={item => item._id}
+        numColumns={2}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-  },
+  container: { flex: 1, padding: 10, backgroundColor: "#000" },
+  card: { flex: 1, margin: 5 },
+  cover: { width: "100%", height: 230, borderRadius: 10 },
+  title: { color: "#fff", marginTop: 5, fontSize: 14 }
 });
-      
