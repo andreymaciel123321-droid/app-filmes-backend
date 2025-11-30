@@ -1,76 +1,37 @@
 import React from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 
-export default function DetailsScreen() {
-  const navigation = useNavigation();
-  const route = useRoute();
+export default function DetailsScreen({ route, navigation }) {
   const { movie } = route.params;
 
   return (
-    <ScrollView style={styles.container}>
-      <Image source={{ uri: movie.poster }} style={styles.poster} />
+    <View style={styles.container}>
+      <Image source={{ uri: movie.cover }} style={styles.cover} />
+      <Text style={styles.title}>{movie.title}</Text>
+      <Text style={styles.sinopse}>{movie.sinopse}</Text>
 
-      <View style={styles.content}>
-        <Text style={styles.title}>{movie.title}</Text>
-
-        <Text style={styles.description}>{movie.description}</Text>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() =>
-            navigation.navigate("Player", {
-              video: movie.video,
-              title: movie.title,
-            })
-          }
-        >
-          <Text style={styles.buttonText}>Assistir</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("Player", { link: movie.video })}
+      >
+        <Text style={styles.buttonText}>Assistir agora</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-  },
-  poster: {
-    width: "100%",
-    height: 400,
-  },
-  content: {
-    padding: 15,
-  },
-  title: {
-    color: "#fff",
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  description: {
-    color: "#ccc",
-    fontSize: 16,
-    marginBottom: 20,
-  },
+  container: { flex: 1, backgroundColor: "#000", padding: 10 },
+  cover: { width: "100%", height: 300, borderRadius: 10 },
+  title: { color: "#fff", fontSize: 24, marginVertical: 10 },
+  sinopse: { color: "#ccc", fontSize: 16 },
   button: {
-    backgroundColor: "#E50914",
-    padding: 12,
-    borderRadius: 6,
-    alignItems: "center",
+    backgroundColor: "#e50914",
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 20,
+    alignItems: "center"
   },
-  buttonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
+  buttonText: { color: "#fff", fontSize: 18 }
 });
+    
