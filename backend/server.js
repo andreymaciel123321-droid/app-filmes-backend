@@ -5,6 +5,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Rotas
+const movieRoutes = require("./routes/movieRoutes");
+app.use("/movies", movieRoutes);
+
 // Rota simples só para testar se o servidor funciona
 app.get("/", (req, res) => {
   res.send("API do app de filmes está rodando!");
