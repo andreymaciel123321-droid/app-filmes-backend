@@ -1,44 +1,26 @@
-// routes/movieRoutes.js
 const express = require("express");
 const router = express.Router();
-const Movie = require("../models/Movie");
 
-// Criar filme
-router.post("/create", async (req, res) => {
-  try {
-    const movie = await Movie.create(req.body);
-    res.json(movie);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+// Lista de filmes (por enquanto manual, depois o ADM vai editar isso)
+const movies = [
+  {
+    id: 1,
+    title: "Vingadores: Ultimato",
+    description: "Os heróis restantes tentam reverter o estalo de Thanos.",
+    thumbnail: "https://i.imgur.com/6Iej2c3.jpeg",
+    video: "https://cdn.jwplayer.com/videos/HkauGhRi-640.mp4"
+  },
+  {
+    id: 2,
+    title: "Interestelar",
+    description: "Um grupo de astronautas viaja através de um buraco negro.",
+    thumbnail: "https://i.imgur.com/8pQeZ7G.jpeg",
+    video: "https://cdn.jwplayer.com/videos/tkM1z9gV-640.mp4"
   }
-});
+];
 
-// Listar todos os filmes
-router.get("/", async (req, res) => {
-  const movies = await Movie.find().sort({ createdAt: -1 });
+router.get("/", (req, res) => {
   res.json(movies);
-});
-
-// Buscar filme por ID
-router.get("/:id", async (req, res) => {
-  try {
-    const movie = await Movie.findById(req.params.id);
-    res.json(movie);
-  } catch (error) {
-    res.status(404).json({ error: "Filme não encontrado" });
-  }
-});
-
-// Deletar filme
-router.delete("/:id", async (req, res) => {
-  await Movie.findByIdAndDelete(req.params.id);
-  res.json({ message: "Filme removido" });
-});
-
-// Atualizar filme
-router.put("/:id", async (req, res) => {
-  const movie = await Movie.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(movie);
 });
 
 module.exports = router;
